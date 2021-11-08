@@ -7,15 +7,10 @@ function App() {
   const [repos, setRepos] = useState([
     {
       id: 1,
-      name: "repo1",
+      name: "freecodecamp",
+      fullname: "freecodecamp/freecodecamp",
       description: "Repository 1",
-      path: "/repo1",
-    },
-    {
-      id: 2,
-      name: "repo2",
-      description: "Repository 2",
-      path: "/repo2",
+      path: "/freecodecamp",
     },
   ]);
   const [activeRepo, setActiveRepo] = useState(null);

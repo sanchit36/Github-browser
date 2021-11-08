@@ -16,7 +16,7 @@ const drawerWidth = 400;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-    height: "100vh",
+    minHeight: "100vh",
   },
   page: {
     backgroundColor: "#f4f4f4",

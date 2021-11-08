@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Container, Grid, Typography } from "@material-ui/core";
 import { useHistory } from "react-router";
-import CustomCard from "../components/CustomCard";
 import SimpleTabs from "../components/SimpleTabs";
 
 const Home = ({ repos, setRepos, activeRepo, setActiveRepo }) => {
@@ -41,7 +40,7 @@ const Home = ({ repos, setRepos, activeRepo, setActiveRepo }) => {
             </Grid>
           </Grid>
 
-          <SimpleTabs />
+          <SimpleTabs repo={activeRepo} />
         </>
       ) : (
         <Typography variant="h6" align="center">

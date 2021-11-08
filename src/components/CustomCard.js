@@ -6,34 +6,40 @@ import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import { Avatar, Typography } from "@material-ui/core";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
+    marginBottom: theme.spacing(3),
   },
   avatar: {
-    width: "30px",
-    height: "30px",
+    width: "40px",
+    height: "40px",
     backgroundColor: red[400],
   },
-});
+}));
 
-const CustomCard = () => {
+const CustomCard = ({ bottom, title, userName, userImage }) => {
   const classes = useStyles();
 
   return (
-    <div>
-      <Card elevation={1} className={classes.root}>
-        <CardContent>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-            Hello World
-          </Typography>
-        </CardContent>
+    <Card elevation={1} className={classes.root}>
+      <CardContent>
+        <Typography variant="h6">{title}</Typography>
+      </CardContent>
+      {bottom && (
         <CardHeader
-          avatar={<Avatar className={classes.avatar}>R</Avatar>}
-          title="Author"
+          avatar={
+            <Avatar className={classes.avatar} src={userImage}>
+              {userName[0].toUpperCase()}
+            </Avatar>
+          }
+          title={
+            <Typography variant="p" color="textSecondary">
+              {userName}
+            </Typography>
+          }
         />
-      </Card>
-    </div>
+      )}
+    </Card>
   );
 };
 
