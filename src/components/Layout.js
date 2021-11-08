@@ -7,25 +7,20 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
 
-import { useLocation } from "react-router";
+import { useHistory, useLocation } from "react-router";
+import CreateForm from "./CreateForm";
 
-const drawerWidth = 300;
+const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    height: "100vh",
   },
   page: {
-    backgroundColor: "#f9f9f9",
-    width: "100%",
+    backgroundColor: "#f4f4f4",
+    flex: 1,
     padding: theme.spacing(3),
   },
   drawer: {
@@ -47,23 +42,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Layout = ({ children }) => {
+const Layout = ({ children, repos, setRepos, setActiveRepo }) => {
   const classes = useStyles();
+  const history = useHistory();
   const location = useLocation();
+  const INITIAL_STATE = {
+    org: "",
+    repo: "",
+  };
   const [open, setOpen] = useState(false);
-
-  const menuItems = [
-    {
-      text: "Repo 1",
-      description: "This is description for repo",
-      path: "/repo1",
-    },
-    {
-      text: "Repo2",
-      description: "This is description for repo",
-      path: "/repo2",
-    },
-  ];
+  const [error, setError] = useState(null);
+  const [values, setValues] = useState(INITIAL_STATE);
 
   // Functions
   const handleClickOpen = () => {
@@ -72,6 +61,40 @@ const Layout = ({ children }) => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  };
+
+  const handleActiveRepo = (repo) => {
+    setActiveRepo(repo);
+    history.push(repo.path);
+  };
+
+  const handleAdd = async () => {
+    setError(null);
+    const url = `https://api.github.com/repos/${values.org}/${values.repo}`;
+    const response = await fetch(url);
+    if (response.status === 200) {
+      const result = await response.json();
+      const newRepo = {
+        id: result.id,
+        name: result.name,
+        fullname: result.full_name,
+        ownerName: result.owner.login,
+        ownerAvatar: result.owner.avatar,
+        description: result.description,
+        path: `/${result.name}`,
+      };
+      setRepos([newRepo, ...repos]);
+      setValues(INITIAL_STATE);
+      handleActiveRepo(newRepo);
+      handleClose();
+      return;
+    }
+    setError("Something went wrong, Try Again!");
   };
 
   return (
@@ -95,25 +118,24 @@ const Layout = ({ children }) => {
 
         {/* List of Repos */}
         <List>
-          {menuItems.map((item) => (
+          {repos.map((item) => (
             <ListItem
               button
-              key={item.text}
+              key={item.id}
               className={
                 location.pathname === item.path ? classes.active : null
               }
+              onClick={() => handleActiveRepo(item)}
             >
               <ListItemText
                 primary={
                   <React.Fragment>
-                    <Typography variant="h6">{item.text}</Typography>
+                    <Typography variant="h6">{item.name}</Typography>
                   </React.Fragment>
                 }
                 secondary={
                   <React.Fragment>
-                    <Typography noWrap variant="body2">
-                      {item.description}
-                    </Typography>
+                    <Typography variant="body2">{item.description}</Typography>
                   </React.Fragment>
                 }
               />
@@ -130,48 +152,17 @@ const Layout = ({ children }) => {
           <AddIcon />
         </Fab>
       </Drawer>
+
       <div className={classes.page}>{children}</div>
 
-      {/* Dialog */}
-      <Dialog
+      <CreateForm
         open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">Add New Repository</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To add a new repository, please enter Owner/Organization name and
-            Repository name.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="org"
-            label="Owner/Organization"
-            type="text"
-            required
-            fullWidth
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="repo"
-            label="Repository Name"
-            type="text"
-            required
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+        values={values}
+        error={error}
+        handleClose={handleClose}
+        handleOnChange={handleOnChange}
+        handleAdd={handleAdd}
+      />
     </div>
   );
 };

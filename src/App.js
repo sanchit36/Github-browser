@@ -4,15 +4,36 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 
 function App() {
-  const [repos, setRepos] = useState([]);
+  const [repos, setRepos] = useState([
+    {
+      id: 1,
+      name: "repo1",
+      description: "Repository 1",
+      path: "/repo1",
+    },
+    {
+      id: 2,
+      name: "repo2",
+      description: "Repository 2",
+      path: "/repo2",
+    },
+  ]);
   const [activeRepo, setActiveRepo] = useState(null);
 
   return (
     <Router>
       <Layout repos={repos} setRepos={setRepos} setActiveRepo={setActiveRepo}>
         <Switch>
+          <Route exact path="/">
+            <Home activeRepo={null} />
+          </Route>
           <Route exact path="/:repoName">
-            <Home activeRepo={activeRepo} />
+            <Home
+              repos={repos}
+              setRepos={setRepos}
+              activeRepo={activeRepo}
+              setActiveRepo={setActiveRepo}
+            />
           </Route>
         </Switch>
       </Layout>
