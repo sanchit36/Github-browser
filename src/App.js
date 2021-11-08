@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Layout from "./components/Layout";
+import Commits from "./pages/Commits";
 import Home from "./pages/Home";
 
 function App() {
-  const [repos, setRepos] = useState([
-    {
-      id: 1,
-      name: "freecodecamp",
-      fullname: "freecodecamp/freecodecamp",
-      description: "Repository 1",
-      path: "/freecodecamp",
-    },
-  ]);
+  const [repos, setRepos] = useState([]);
   const [activeRepo, setActiveRepo] = useState(null);
 
   return (
@@ -29,6 +22,9 @@ function App() {
               activeRepo={activeRepo}
               setActiveRepo={setActiveRepo}
             />
+          </Route>
+          <Route exact path="/commits/:orgName/:repoName">
+            <Commits repo={activeRepo} />
           </Route>
         </Switch>
       </Layout>

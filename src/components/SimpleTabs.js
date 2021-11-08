@@ -78,7 +78,11 @@ const SimpleTabs = ({ repo }) => {
         {error ? (
           <List>
             {branches.map((branch) => (
-              <CustomCard key={branch.name} title={branch.name} />
+              <CustomCard
+                key={branch.name}
+                link={`/commits/${repo.fullname}`}
+                title={branch.name}
+              />
             ))}
           </List>
         ) : (

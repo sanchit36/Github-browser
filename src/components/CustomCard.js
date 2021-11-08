@@ -5,6 +5,8 @@ import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import { Avatar, Typography } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,13 +19,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomCard = ({ bottom, title, userName, userImage }) => {
+const CustomCard = ({ link, bottom, subtitle, title, userName, userImage }) => {
   const classes = useStyles();
 
   return (
     <Card elevation={1} className={classes.root}>
       <CardContent>
-        <Typography variant="h6">{title}</Typography>
+        {subtitle && (
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            {moment(subtitle).format("DD MMM YYYY, h:mm:ss a")}
+          </Typography>
+        )}
+
+        {link ? (
+          <Link to={{ pathname: link, state: title }}>
+            <Typography variant="h6">{title}</Typography>
+          </Link>
+        ) : (
+          <Typography variant="h6">{title}</Typography>
+        )}
       </CardContent>
       {bottom && (
         <CardHeader
